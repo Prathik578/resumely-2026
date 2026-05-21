@@ -18,8 +18,10 @@ export const ResumePreview = forwardRef<HTMLDivElement, Props>(function ResumePr
   return (
     <div
       ref={ref}
-      className="bg-white text-black mx-auto shadow-sm"
+      className="mx-auto shadow-sm"
       style={{
+        background: "#ffffff",
+        color: "#111111",
         width: "100%",
         maxWidth: "8.5in",
         minHeight: "11in",

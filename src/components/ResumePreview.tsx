@@ -31,7 +31,7 @@ export const ResumePreview = forwardRef<HTMLDivElement, Props>(function ResumePr
           : "'Source Serif 4', Georgia, serif",
         fontSize: "10.5pt",
         lineHeight: 1.45,
-        color: "#111",
+        
       }}
     >
       {/* Header */}

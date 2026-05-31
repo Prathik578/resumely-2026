@@ -4,16 +4,17 @@ import { SiteHeader } from "@/components/SiteHeader";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Resumely — Build Better Resumes with AI" },
+      { title: "Resumely — Recruiter-Style Resume Intelligence" },
       {
         name: "description",
         content:
-          "Create ATS-optimized resumes and get instant AI feedback. Free, fast, and built for job seekers.",
+          "See how recruiters and hiring managers may evaluate your resume before you apply. Human-style AI feedback, role-aware insights, and recruiter verdicts.",
       },
-      { property: "og:title", content: "Resumely — Build Better Resumes with AI" },
+      { property: "og:title", content: "Resumely — Recruiter-Style Resume Intelligence" },
       {
         property: "og:description",
-        content: "ATS-friendly resume builder with AI-powered review.",
+        content:
+          "Human-style resume evaluation powered by AI. Understand how your resume may actually be perceived.",
       },
     ],
   }),
@@ -25,10 +26,10 @@ function Landing() {
     <div className="min-h-screen bg-background">
       <SiteHeader>
         <Link
-          to="/builder"
+          to="/checker"
           className="hidden sm:inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition"
         >
-          Get Started
+          Try Recruiter Review
         </Link>
       </SiteHeader>
 
@@ -36,53 +37,69 @@ function Landing() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-24 text-center">
         <div className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs text-muted-foreground mb-6">
           <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
-          AI-powered resume tools for job seekers
+          Recruiter-style resume intelligence
         </div>
         <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight max-w-3xl mx-auto leading-[1.05]">
-          Build Better Resumes <br className="hidden sm:block" /> with AI
+          See how recruiters may evaluate your resume
+          <span className="text-muted-foreground"> — before you apply.</span>
         </h1>
         <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Create clean, ATS-optimized resumes in minutes and get instant AI-powered feedback that
-          helps you land more interviews.
+          Resumely simulates how a recruiter or hiring manager may read your resume — surfacing
+          clarity, role alignment, and impact gaps that ATS scores miss.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
-            to="/builder"
+            to="/checker"
             className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition"
           >
-            Build Resume
+            Get a Recruiter Review
           </Link>
           <Link
-            to="/checker"
+            to="/builder"
             className="inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium border border-border text-foreground hover:bg-secondary transition"
           >
-            Check Resume
+            Build a Resume
           </Link>
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">No signup required. Free to try.</p>
+        <p className="mt-4 text-xs text-muted-foreground">
+          Guidance, not a guarantee of hiring outcomes. No signup required.
+        </p>
       </section>
 
-      {/* Features */}
+      {/* What you get */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-border">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-semibold tracking-tight">Everything you need</h2>
-          <p className="text-muted-foreground mt-2">
-            Three powerful tools to give your job search an edge.
+          <h2 className="text-3xl font-semibold tracking-tight">A human-style review, not a keyword score</h2>
+          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
+            We focus on how your resume actually reads to the people who decide if you get the
+            interview.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
             {
-              title: "ATS Optimization",
-              desc: "Clean, parser-friendly layouts that get through applicant tracking systems.",
+              title: "Recruiter Verdict",
+              desc: "A first-impression summary, shortlist potential, and hiring-manager confidence read.",
             },
             {
-              title: "AI Resume Feedback",
-              desc: "Get recruiter-style suggestions, keyword gaps, and improvement tips instantly.",
+              title: "Role-Aware Evaluation",
+              desc: "Different criteria for engineering, product, design, marketing, data, sales, and more.",
             },
             {
-              title: "Resume Templates",
-              desc: "Modern and classic templates designed for technical and non-technical roles.",
+              title: "Impact Rewrites",
+              desc: "Transform task-style bullets into outcome-driven achievements recruiters scan for.",
+            },
+            {
+              title: "Observed Signals",
+              desc: "Every conclusion is backed by specific signals the AI noticed in your resume.",
+            },
+            {
+              title: "ATS Compatibility",
+              desc: "Still covered — but as a supporting check, not the headline metric.",
+            },
+            {
+              title: "Premium Templates",
+              desc: "Clean, recruiter-readable layouts tuned for clarity and professional polish.",
             },
           ].map((f) => (
             <div
@@ -99,74 +116,43 @@ function Landing() {
         </div>
       </section>
 
-      {/* Templates */}
+      {/* How it works */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-border">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 className="text-3xl font-semibold tracking-tight">Polished templates, ready to ship</h2>
-            <p className="text-muted-foreground mt-3">
-              Pick between a Modern and Classic template. Both are tuned for readability and ATS
-              parsers, with sensible spacing and typography out of the box.
-            </p>
-            <Link
-              to="/builder"
-              className="mt-6 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition"
-            >
-              Try the builder
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {["Modern", "Classic"].map((t) => (
-              <div key={t} className="rounded-xl border border-border bg-secondary/40 aspect-[3/4] p-4 flex flex-col">
-                <div className="h-3 w-24 bg-foreground rounded" />
-                <div className="mt-2 h-2 w-32 bg-muted-foreground/40 rounded" />
-                <div className="mt-4 space-y-1.5">
-                  <div className="h-1.5 w-full bg-muted-foreground/30 rounded" />
-                  <div className="h-1.5 w-5/6 bg-muted-foreground/30 rounded" />
-                  <div className="h-1.5 w-4/6 bg-muted-foreground/30 rounded" />
-                </div>
-                <div className="mt-auto text-xs text-muted-foreground">{t}</div>
-              </div>
-            ))}
-          </div>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-semibold tracking-tight">How the recruiter review works</h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-5">
+          {[
+            { n: "01", t: "Share your resume", d: "Paste your resume text and pick your target role and experience level." },
+            { n: "02", t: "Simulated recruiter read", d: "We evaluate clarity, role fit, impact, and communication — the way a recruiter scans in 30 seconds." },
+            { n: "03", t: "Verdict + next steps", d: "Get a recruiter verdict, observed signals, and concrete rewrites for weak bullets." },
+          ].map((s) => (
+            <div key={s.n} className="rounded-xl border border-border p-6">
+              <div className="text-xs font-mono text-muted-foreground">{s.n}</div>
+              <h3 className="mt-2 font-semibold">{s.t}</h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">{s.d}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Pricing placeholder */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 border-t border-border">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-semibold tracking-tight">Simple pricing</h2>
-          <p className="text-muted-foreground mt-2">Start free. Upgrade when you need more.</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
-          {[
-            { name: "Free", price: "$0", features: ["Resume builder", "PDF export", "1 AI check / day"] },
-            { name: "Pro", price: "$9", features: ["Unlimited AI checks", "Premium templates", "Keyword targeting"], highlight: true },
-            { name: "Teams", price: "Custom", features: ["Career services", "Bulk reviews", "Priority support"] },
-          ].map((p) => (
-            <div
-              key={p.name}
-              className={`rounded-xl border p-6 ${
-                p.highlight ? "border-foreground" : "border-border"
-              }`}
-            >
-              <div className="flex items-baseline justify-between">
-                <h3 className="font-semibold">{p.name}</h3>
-                <div className="text-2xl font-semibold">{p.price}</div>
-              </div>
-              <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                {p.features.map((f) => (
-                  <li key={f}>· {f}</li>
-                ))}
-              </ul>
-              <button
-                disabled
-                className="mt-6 w-full inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium border border-border text-muted-foreground cursor-not-allowed"
-              >
-                Coming soon
-              </button>
-            </div>
-          ))}
+      {/* Positioning strip */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-16 border-t border-border">
+        <div className="grid sm:grid-cols-2 gap-6">
+          <div className="rounded-xl border border-border p-6">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Most AI tools say</div>
+            <p className="mt-2 text-sm text-muted-foreground line-through">
+              “ATS score: 74. Missing keywords: React, Agile, leadership.”
+            </p>
+          </div>
+          <div className="rounded-xl border border-foreground p-6 bg-secondary/40">
+            <div className="text-xs uppercase tracking-wider text-foreground">Resumely says</div>
+            <p className="mt-2 text-sm text-foreground">
+              “A recruiter scanning this resume may read it as a strong technical background, but
+              your project bullets feel task-oriented rather than impact-oriented — making
+              ownership hard to spot in 30 seconds.”
+            </p>
+          </div>
         </div>
       </section>
 
@@ -176,20 +162,20 @@ function Landing() {
         <div className="mt-8 divide-y divide-border border-y border-border">
           {[
             {
-              q: "Is Resumely free?",
-              a: "Yes — the builder and PDF export are free. Pro plans add unlimited AI reviews and premium templates.",
+              q: "Is this another ATS score tool?",
+              a: "No. ATS compatibility is checked as a supporting signal, but our focus is how a human recruiter or hiring manager may actually read and judge your resume.",
             },
             {
-              q: "Are the resumes ATS-friendly?",
-              a: "Templates use simple, parser-friendly layouts with standard sections and fonts.",
+              q: "Will this guarantee me an interview?",
+              a: "No tool can. Resumely is designed as guidance — it surfaces how your resume may be perceived so you can decide what to strengthen before applying.",
+            },
+            {
+              q: "Does it support different roles?",
+              a: "Yes. Engineering, product, design, marketing, data, business analyst, sales, and general internships each use different evaluation criteria.",
             },
             {
               q: "Do I need an account?",
-              a: "No. You can build and download a resume without signing up.",
-            },
-            {
-              q: "How does the AI checker work?",
-              a: "It analyzes your resume for ATS readiness, missing keywords, and recruiter-style improvements.",
+              a: "No. You can run a recruiter review and build a resume without signing up.",
             },
           ].map((item) => (
             <details key={item.q} className="group py-4">
@@ -201,17 +187,21 @@ function Landing() {
             </details>
           ))}
         </div>
+        <p className="mt-8 text-xs text-muted-foreground text-center max-w-xl mx-auto">
+          AI feedback is designed to simulate recruiter-style evaluation and should be used as
+          guidance, not as a guarantee of hiring outcomes.
+        </p>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Resumely. All rights reserved.
+            © {new Date().getFullYear()} Resumely. Recruiter-style resume intelligence.
           </div>
           <div className="flex items-center gap-5 text-sm text-muted-foreground">
             <Link to="/builder" className="hover:text-foreground">Builder</Link>
-            <Link to="/checker" className="hover:text-foreground">AI Checker</Link>
+            <Link to="/checker" className="hover:text-foreground">Recruiter Review</Link>
           </div>
         </div>
       </footer>

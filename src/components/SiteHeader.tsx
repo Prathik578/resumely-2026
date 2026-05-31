@@ -22,7 +22,7 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
             Builder
           </Link>
           <Link to="/checker" className={linkBase} activeProps={{ className: activeCls }}>
-            AI Checker
+            Recruiter Review
           </Link>
         </nav>
         <div className="flex items-center gap-2">{children}</div>

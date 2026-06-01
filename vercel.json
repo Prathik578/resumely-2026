@@ -1,11 +1,6 @@
 {
   "buildCommand": "bun run build",
   "outputDirectory": "dist/client",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "edge"
-    }
-  },
   "rewrites": [
     {
       "source": "/((?!assets/).*)",

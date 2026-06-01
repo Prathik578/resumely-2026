@@ -9,9 +9,9 @@ export const Route = createFileRoute("/builder")({
   head: () => ({
     meta: [
       { title: "Resume Builder — Resumely" },
-      { name: "description", content: "Build an ATS-friendly resume with live preview and PDF export." },
+      { name: "description", content: "Build a recruiter-ready resume with live preview and PDF export." },
       { property: "og:title", content: "Resume Builder — Resumely" },
-      { property: "og:description", content: "Live preview ATS-friendly resume builder." },
+      { property: "og:description", content: "Live preview recruiter-ready resume builder." },
     ],
   }),
   component: Builder,
@@ -100,7 +100,7 @@ function Builder() {
           <div>
             <div className="mb-5">
               <h1 className="text-2xl font-semibold tracking-tight">
-                Build your ATS-friendly resume
+                Build a recruiter-ready resume
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
                 Fill in your details. The preview updates instantly.

@@ -48,6 +48,7 @@ type Analysis = {
   observedSignals: string[];
   roleAlignment: { label: string; note: string }[];
   rewrites: Rewrite[];
+  targetRole: { primary: string; secondary: string[]; confidence: "High" | "Medium" | "Low" };
 };
 
 const ROLES: Role[] = [
@@ -188,6 +189,66 @@ function detectJobRelevance(text: string): { ok: boolean; field?: string; role?:
   return { ok: false };
 }
 
+type RoleExtraction = {
+  primary: string;
+  secondary: string[];
+  confidence: "High" | "Medium" | "Low";
+};
+
+function extractTargetRole(text: string): RoleExtraction {
+  const lower = text.toLowerCase();
+
+  // Explicit role mention in summary/objective
+  const explicit = text.match(
+    /(?:seeking|looking for|aspiring|target(?:ing)?|applying for|position as|role as|career as|objective[:\s-]+)\s*(?:an?\s+|the\s+)?([A-Z][A-Za-z/&\s-]{3,40}?)(?:\s+(?:role|position|internship|intern|job|opportunit|at|with|in)|[.,\n])/i,
+  );
+
+  const roleScores: { role: string; score: number }[] = [
+    { role: "Software Engineer", score: count(lower, ["software engineer", "software developer", "swe", "full-stack", "fullstack", "backend developer", "frontend developer", "react", "node.js", "typescript", "javascript", "api", "git"]) },
+    { role: "Data Scientist", score: count(lower, ["data scientist", "machine learning", "deep learning", "tensorflow", "pytorch", "nlp", "model training"]) },
+    { role: "Data Analyst", score: count(lower, ["data analyst", "sql", "tableau", "power bi", "excel", "dashboard", "analytics", "etl"]) },
+    { role: "Product Manager", score: count(lower, ["product manager", "product management", "roadmap", "prd", "user research", "stakeholder"]) },
+    { role: "UI/UX Designer", score: count(lower, ["ui/ux", "ux designer", "ui designer", "figma", "sketch", "wireframe", "prototype", "user experience"]) },
+    { role: "Marketing Specialist", score: count(lower, ["marketing", "seo", "sem", "campaign", "brand", "social media", "google ads", "content strategy"]) },
+    { role: "Sales Representative", score: count(lower, ["sales", "quota", "pipeline", "crm", "salesforce", "lead generation", "account executive"]) },
+    { role: "Business Analyst", score: count(lower, ["business analyst", "requirements gathering", "stakeholder", "process improvement", "jira"]) },
+    { role: "Financial Analyst", score: count(lower, ["finance", "valuation", "financial model", "investment", "equity", "cfa", "banking"]) },
+    { role: "Electrical Engineer", score: count(lower, ["circuit", "pcb", "vlsi", "embedded", "microcontroller", "verilog", "fpga", "power systems"]) },
+    { role: "Mechanical Engineer", score: count(lower, ["cad", "solidworks", "autocad", "ansys", "thermodynamics", "mechanical design"]) },
+    { role: "Civil Engineer", score: count(lower, ["structural", "construction", "surveying", "staad", "revit", "civil"]) },
+    { role: "HR / Recruiter", score: count(lower, ["human resources", "recruit", "talent acquisition", "onboarding", "hrbp"]) },
+    { role: "Operations / Supply Chain", score: count(lower, ["supply chain", "logistics", "procurement", "inventory", "six sigma", "operations"]) },
+    { role: "Healthcare Professional", score: count(lower, ["nurse", "patient care", "clinical", "hospital", "medical", "physician"]) },
+  ];
+
+  const ranked = roleScores.filter((r) => r.score > 0).sort((a, b) => b.score - a.score);
+  const top = ranked[0];
+  const explicitRole = explicit?.[1]?.trim();
+
+  let primary = explicitRole || top?.role || "Unspecified Role";
+  // Normalize title casing for explicit
+  if (explicitRole) {
+    primary = explicitRole.replace(/\s+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  const secondary = ranked
+    .slice(explicitRole ? 0 : 1, explicitRole ? 2 : 3)
+    .filter((r) => r.role !== primary)
+    .map((r) => r.role);
+
+  let confidence: RoleExtraction["confidence"] = "Low";
+  if (explicitRole && top && top.score >= 2) confidence = "High";
+  else if (explicitRole) confidence = "Medium";
+  else if (top && top.score >= 4) confidence = "High";
+  else if (top && top.score >= 2) confidence = "Medium";
+
+  return { primary, secondary, confidence };
+}
+
+function count(text: string, keywords: string[]): number {
+  return keywords.reduce((n, k) => (text.includes(k) ? n + 1 : n), 0);
+}
+
 function mockAnalyze(text: string, role: Role, level: Level): Analysis {
   const raw = text.trim();
   const len = raw.length;
@@ -281,6 +342,7 @@ function mockAnalyze(text: string, role: Role, level: Level): Analysis {
     observedSignals,
     roleAlignment: roleCriteria[role],
     rewrites,
+    targetRole: extractTargetRole(text),
   };
 }
 
@@ -505,6 +567,39 @@ function Checker() {
               </div>
             ) : (
               <>
+                {/* Extracted target role */}
+                <div className="rounded-xl border border-border p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                      Detected target role
+                    </div>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                        analysis.targetRole.confidence === "High"
+                          ? "border-foreground text-foreground"
+                          : analysis.targetRole.confidence === "Medium"
+                            ? "border-border text-foreground"
+                            : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {analysis.targetRole.confidence} confidence
+                    </span>
+                  </div>
+                  <div className="mt-2 text-lg font-semibold tracking-tight">
+                    {analysis.targetRole.primary}
+                  </div>
+                  {analysis.targetRole.secondary.length > 0 && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>Also fits:</span>
+                      {analysis.targetRole.secondary.map((s) => (
+                        <span key={s} className="px-2 py-0.5 rounded-md border border-border text-foreground">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* Verdict */}
                 <div className="rounded-xl border border-border p-6">
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">

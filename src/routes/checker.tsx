@@ -409,7 +409,14 @@ function Checker() {
 
           {/* Results */}
           <div className="lg:col-span-3 space-y-5">
-            {loading ? (
+            {invalidMessage ? (
+              <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-6">
+                <div className="text-xs uppercase tracking-wider text-destructive">
+                  Invalid input
+                </div>
+                <p className="mt-2 text-sm text-foreground">{invalidMessage}</p>
+              </div>
+            ) : loading ? (
               <div className="rounded-xl border border-border p-8">
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">
                   Recruiter review in progress

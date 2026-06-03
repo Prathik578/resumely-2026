@@ -154,6 +154,40 @@ function isLikelyResume(text: string): boolean {
   return false;
 }
 
+function detectJobRelevance(text: string): { ok: boolean; field?: string; role?: string } {
+  const lower = text.toLowerCase();
+  const fields: { field: string; role: string; keywords: string[] }[] = [
+    { field: "Software Engineering", role: "Software Engineer", keywords: ["software", "developer", "engineer", "react", "javascript", "typescript", "python", "java ", "node", "api", "backend", "frontend", "full-stack", "fullstack", "git", "aws", "docker"] },
+    { field: "Data / Analytics", role: "Data Analyst / Data Scientist", keywords: ["data analyst", "data scientist", "machine learning", "sql", "tableau", "power bi", "pandas", "numpy", "analytics", "etl"] },
+    { field: "Electrical Engineering", role: "Electrical / Hardware Engineer", keywords: ["circuit design", "pcb", "vlsi", "embedded", "microcontroller", "verilog", "matlab", "power systems", "signal processing", "fpga"] },
+    { field: "Mechanical Engineering", role: "Mechanical Engineer", keywords: ["cad", "solidworks", "autocad", "ansys", "thermodynamics", "manufacturing", "mechanical design"] },
+    { field: "Civil Engineering", role: "Civil Engineer", keywords: ["civil engineer", "structural", "construction", "surveying", "staad", "revit"] },
+    { field: "Finance", role: "Finance / Analyst", keywords: ["finance", "accounting", "audit", "investment", "valuation", "financial model", "excel", "cfa", "banking", "equity"] },
+    { field: "Marketing", role: "Marketing / Growth", keywords: ["marketing", "seo", "sem", "campaign", "brand", "content strategy", "social media", "growth", "google ads"] },
+    { field: "Sales", role: "Sales Representative", keywords: ["sales", "quota", "pipeline", "crm", "salesforce", "lead generation", "account executive"] },
+    { field: "Product Management", role: "Product Manager", keywords: ["product manager", "product management", "roadmap", "stakeholder", "user research", "prd"] },
+    { field: "Design", role: "UI/UX Designer", keywords: ["ui/ux", "ux design", "figma", "sketch", "wireframe", "prototype", "user experience", "interaction design"] },
+    { field: "Human Resources", role: "HR / Recruiter", keywords: ["human resources", "recruit", "talent acquisition", "onboarding", "payroll", "hrbp"] },
+    { field: "Operations", role: "Operations / Supply Chain", keywords: ["operations", "supply chain", "logistics", "procurement", "inventory", "six sigma"] },
+    { field: "Healthcare", role: "Healthcare Professional", keywords: ["nurse", "patient care", "clinical", "hospital", "medical", "pharmacy", "physician"] },
+    { field: "Education", role: "Educator / Teacher", keywords: ["teacher", "teaching", "curriculum", "classroom", "lesson plan", "tutor"] },
+    { field: "Legal", role: "Legal Professional", keywords: ["legal", "law firm", "litigation", "paralegal", "contracts", "compliance"] },
+  ];
+
+  let best = { field: "", role: "", hits: 0 };
+  for (const f of fields) {
+    const hits = f.keywords.filter((k) => lower.includes(k)).length;
+    if (hits > best.hits) best = { field: f.field, role: f.role, hits };
+  }
+
+  const jobIntent = /(intern|internship|seeking|looking for|career|position|role|employment|opportunit)/i.test(text);
+
+  if (best.hits >= 2 || (best.hits >= 1 && jobIntent)) {
+    return { ok: true, field: best.field, role: best.role };
+  }
+  return { ok: false };
+}
+
 function mockAnalyze(text: string, role: Role, level: Level): Analysis {
   const raw = text.trim();
   const len = raw.length;
@@ -276,6 +310,15 @@ function Checker() {
       setLoading(false);
       setInvalidMessage(
         "Invalid Input: Please provide a resume or job-related career document for analysis.",
+      );
+      return;
+    }
+    const relevance = detectJobRelevance(text);
+    if (!relevance.ok) {
+      setAnalysis(null);
+      setLoading(false);
+      setInvalidMessage(
+        "This resume does not appear to target a specific job role. Please provide a job-oriented resume.",
       );
       return;
     }

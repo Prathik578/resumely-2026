@@ -115,6 +115,45 @@ const roleCriteria: Record<Role, { label: string; note: string }[]> = {
   ],
 };
 
+function isLikelyResume(text: string): boolean {
+  const t = text.trim();
+  if (t.length < 120) return false;
+  const lower = t.toLowerCase();
+
+  const profileSignals = [
+    /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/, // email
+    /(\+?\d[\d\s().-]{7,}\d)/, // phone
+    /linkedin\.com\/in\//i,
+    /github\.com\//i,
+    /\bcurriculum vitae\b|\bresume\b|\bcv\b/i,
+  ];
+
+  const sectionKeywords = [
+    "experience", "work experience", "professional experience", "employment",
+    "education", "academic", "university", "college", "bachelor", "master", "b.tech", "m.tech", "degree",
+    "projects", "project",
+    "skills", "technical skills", "tools", "technologies",
+    "internship", "intern",
+    "certifications", "certificate",
+    "achievements", "awards",
+    "summary", "objective", "profile",
+    "responsibilities", "responsible for",
+  ];
+
+  const dateRange = /\b(19|20)\d{2}\b\s*[-–—to]+\s*((19|20)\d{2}|present|current)/i;
+  const monthYear = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(19|20)\d{2}\b/i;
+
+  const profileHits = profileSignals.filter((r) => r.test(t)).length;
+  const sectionHits = sectionKeywords.filter((k) => lower.includes(k)).length;
+  const hasDates = dateRange.test(t) || monthYear.test(t);
+
+  // Need at least some recognizable resume sections plus either contact info or dates.
+  if (sectionHits >= 3) return true;
+  if (sectionHits >= 2 && (profileHits >= 1 || hasDates)) return true;
+  if (sectionHits >= 1 && profileHits >= 1 && hasDates) return true;
+  return false;
+}
+
 function mockAnalyze(text: string, role: Role, level: Level): Analysis {
   const raw = text.trim();
   const len = raw.length;
@@ -217,6 +256,7 @@ function Checker() {
   const [level, setLevel] = useState<Level>("Entry");
   const [industry, setIndustry] = useState("");
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [invalidMessage, setInvalidMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
 
@@ -231,6 +271,15 @@ function Checker() {
 
   const onAnalyze = () => {
     if (!text.trim()) return;
+    if (!isLikelyResume(text)) {
+      setAnalysis(null);
+      setLoading(false);
+      setInvalidMessage(
+        "Invalid Input: Please provide a resume or job-related career document for analysis.",
+      );
+      return;
+    }
+    setInvalidMessage(null);
     setLoading(true);
     setAnalysis(null);
     setTimeout(() => {
@@ -360,7 +409,14 @@ function Checker() {
 
           {/* Results */}
           <div className="lg:col-span-3 space-y-5">
-            {loading ? (
+            {invalidMessage ? (
+              <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-6">
+                <div className="text-xs uppercase tracking-wider text-destructive">
+                  Invalid input
+                </div>
+                <p className="mt-2 text-sm text-foreground">{invalidMessage}</p>
+              </div>
+            ) : loading ? (
               <div className="rounded-xl border border-border p-8">
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">
                   Recruiter review in progress

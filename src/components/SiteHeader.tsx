@@ -12,7 +12,7 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
           <div className="h-7 w-7 rounded-md bg-foreground text-background flex items-center justify-center text-xs font-bold">
             R
           </div>
-          <span className="font-semibold tracking-tight">Resumely</span>
+          <span className="font-semibold tracking-tight">Clario</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className={linkBase} activeProps={{ className: activeCls }} activeOptions={{ exact: true }}>

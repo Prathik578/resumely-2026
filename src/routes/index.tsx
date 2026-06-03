@@ -4,13 +4,13 @@ import { SiteHeader } from "@/components/SiteHeader";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Resumely — Recruiter-Style Resume Intelligence" },
+      { title: "Clario — Recruiter-Style Resume Intelligence" },
       {
         name: "description",
         content:
           "See how recruiters and hiring managers may evaluate your resume before you apply. Human-style AI feedback, role-aware insights, and recruiter verdicts.",
       },
-      { property: "og:title", content: "Resumely — Recruiter-Style Resume Intelligence" },
+      { property: "og:title", content: "Clario — Recruiter-Style Resume Intelligence" },
       {
         property: "og:description",
         content:
@@ -44,7 +44,7 @@ function Landing() {
           <span className="text-muted-foreground"> — before you apply.</span>
         </h1>
         <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Resumely simulates how a recruiter or hiring manager may read your resume — surfacing
+          Clario simulates how a recruiter or hiring manager may read your resume — surfacing
           clarity, role alignment, and impact gaps that ATS scores miss.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -146,7 +146,7 @@ function Landing() {
             </p>
           </div>
           <div className="rounded-xl border border-foreground p-6 bg-secondary/40">
-            <div className="text-xs uppercase tracking-wider text-foreground">Resumely says</div>
+            <div className="text-xs uppercase tracking-wider text-foreground">Clario says</div>
             <p className="mt-2 text-sm text-foreground">
               “A recruiter scanning this resume may read it as a strong technical background, but
               your project bullets feel task-oriented rather than impact-oriented — making
@@ -167,7 +167,7 @@ function Landing() {
             },
             {
               q: "Will this guarantee me an interview?",
-              a: "No tool can. Resumely is designed as guidance — it surfaces how your resume may be perceived so you can decide what to strengthen before applying.",
+              a: "No tool can. Clario is designed as guidance — it surfaces how your resume may be perceived so you can decide what to strengthen before applying.",
             },
             {
               q: "Does it support different roles?",
@@ -197,7 +197,7 @@ function Landing() {
       <footer className="border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Resumely. Recruiter-style resume intelligence.
+            © {new Date().getFullYear()} Clario. Recruiter-style resume intelligence.
           </div>
           <div className="flex items-center gap-5 text-sm text-muted-foreground">
             <Link to="/builder" className="hover:text-foreground">Builder</Link>

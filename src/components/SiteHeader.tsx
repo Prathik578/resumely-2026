@@ -10,7 +10,7 @@ export function SiteHeader({ children }: { children?: React.ReactNode }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="h-7 w-7 rounded-md bg-foreground text-background flex items-center justify-center text-xs font-bold">
-            R
+            C
           </div>
           <span className="font-semibold tracking-tight">Clario</span>
         </Link>

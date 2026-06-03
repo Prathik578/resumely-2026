@@ -217,6 +217,7 @@ function Checker() {
   const [level, setLevel] = useState<Level>("Entry");
   const [industry, setIndustry] = useState("");
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [invalidMessage, setInvalidMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
 

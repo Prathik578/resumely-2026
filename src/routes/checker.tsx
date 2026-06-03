@@ -48,6 +48,7 @@ type Analysis = {
   observedSignals: string[];
   roleAlignment: { label: string; note: string }[];
   rewrites: Rewrite[];
+  targetRole: { primary: string; secondary: string[]; confidence: "High" | "Medium" | "Low" };
 };
 
 const ROLES: Role[] = [

@@ -313,6 +313,15 @@ function Checker() {
       );
       return;
     }
+    const relevance = detectJobRelevance(text);
+    if (!relevance.ok) {
+      setAnalysis(null);
+      setLoading(false);
+      setInvalidMessage(
+        "This resume does not appear to target a specific job role. Please provide a job-oriented resume.",
+      );
+      return;
+    }
     setInvalidMessage(null);
     setLoading(true);
     setAnalysis(null);

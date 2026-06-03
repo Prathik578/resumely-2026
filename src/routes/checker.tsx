@@ -115,6 +115,45 @@ const roleCriteria: Record<Role, { label: string; note: string }[]> = {
   ],
 };
 
+function isLikelyResume(text: string): boolean {
+  const t = text.trim();
+  if (t.length < 120) return false;
+  const lower = t.toLowerCase();
+
+  const profileSignals = [
+    /\b[\w.+-]+@[\w-]+\.[\w.-]+\b/, // email
+    /(\+?\d[\d\s().-]{7,}\d)/, // phone
+    /linkedin\.com\/in\//i,
+    /github\.com\//i,
+    /\bcurriculum vitae\b|\bresume\b|\bcv\b/i,
+  ];
+
+  const sectionKeywords = [
+    "experience", "work experience", "professional experience", "employment",
+    "education", "academic", "university", "college", "bachelor", "master", "b.tech", "m.tech", "degree",
+    "projects", "project",
+    "skills", "technical skills", "tools", "technologies",
+    "internship", "intern",
+    "certifications", "certificate",
+    "achievements", "awards",
+    "summary", "objective", "profile",
+    "responsibilities", "responsible for",
+  ];
+
+  const dateRange = /\b(19|20)\d{2}\b\s*[-–—to]+\s*((19|20)\d{2}|present|current)/i;
+  const monthYear = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+(19|20)\d{2}\b/i;
+
+  const profileHits = profileSignals.filter((r) => r.test(t)).length;
+  const sectionHits = sectionKeywords.filter((k) => lower.includes(k)).length;
+  const hasDates = dateRange.test(t) || monthYear.test(t);
+
+  // Need at least some recognizable resume sections plus either contact info or dates.
+  if (sectionHits >= 3) return true;
+  if (sectionHits >= 2 && (profileHits >= 1 || hasDates)) return true;
+  if (sectionHits >= 1 && profileHits >= 1 && hasDates) return true;
+  return false;
+}
+
 function mockAnalyze(text: string, role: Role, level: Level): Analysis {
   const raw = text.trim();
   const len = raw.length;

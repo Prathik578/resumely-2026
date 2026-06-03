@@ -232,6 +232,15 @@ function Checker() {
 
   const onAnalyze = () => {
     if (!text.trim()) return;
+    if (!isLikelyResume(text)) {
+      setAnalysis(null);
+      setLoading(false);
+      setInvalidMessage(
+        "Invalid Input: Please provide a resume or job-related career document for analysis.",
+      );
+      return;
+    }
+    setInvalidMessage(null);
     setLoading(true);
     setAnalysis(null);
     setTimeout(() => {

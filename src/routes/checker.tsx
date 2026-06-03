@@ -342,6 +342,7 @@ function mockAnalyze(text: string, role: Role, level: Level): Analysis {
     observedSignals,
     roleAlignment: roleCriteria[role],
     rewrites,
+    targetRole: extractTargetRole(text),
   };
 }
 

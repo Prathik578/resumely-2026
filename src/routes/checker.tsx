@@ -567,6 +567,39 @@ function Checker() {
               </div>
             ) : (
               <>
+                {/* Extracted target role */}
+                <div className="rounded-xl border border-border p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground">
+                      Detected target role
+                    </div>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full border ${
+                        analysis.targetRole.confidence === "High"
+                          ? "border-foreground text-foreground"
+                          : analysis.targetRole.confidence === "Medium"
+                            ? "border-border text-foreground"
+                            : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {analysis.targetRole.confidence} confidence
+                    </span>
+                  </div>
+                  <div className="mt-2 text-lg font-semibold tracking-tight">
+                    {analysis.targetRole.primary}
+                  </div>
+                  {analysis.targetRole.secondary.length > 0 && (
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>Also fits:</span>
+                      {analysis.targetRole.secondary.map((s) => (
+                        <span key={s} className="px-2 py-0.5 rounded-md border border-border text-foreground">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* Verdict */}
                 <div className="rounded-xl border border-border p-6">
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">

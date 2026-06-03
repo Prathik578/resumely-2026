@@ -8,9 +8,9 @@ import { emptyResume, exampleResume, ResumeData } from "@/lib/resume-types";
 export const Route = createFileRoute("/builder")({
   head: () => ({
     meta: [
-      { title: "Resume Builder — Resumely" },
+      { title: "Resume Builder — Clario" },
       { name: "description", content: "Build a recruiter-ready resume with live preview and PDF export." },
-      { property: "og:title", content: "Resume Builder — Resumely" },
+      { property: "og:title", content: "Resume Builder — Clario" },
       { property: "og:description", content: "Live preview recruiter-ready resume builder." },
     ],
   }),

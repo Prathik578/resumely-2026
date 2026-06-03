@@ -5,13 +5,13 @@ import { SiteHeader } from "@/components/SiteHeader";
 export const Route = createFileRoute("/checker")({
   head: () => ({
     meta: [
-      { title: "Recruiter Review — Resumely" },
+      { title: "Recruiter Review — Clario" },
       {
         name: "description",
         content:
           "Get a recruiter-style read on your resume: verdict, observed signals, role alignment, and impact rewrites.",
       },
-      { property: "og:title", content: "Recruiter Review — Resumely" },
+      { property: "og:title", content: "Recruiter Review — Clario" },
       {
         property: "og:description",
         content: "Human-style resume evaluation powered by AI.",

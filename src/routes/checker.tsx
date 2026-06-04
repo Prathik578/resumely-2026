@@ -49,6 +49,7 @@ type Analysis = {
   roleAlignment: { label: string; note: string }[];
   rewrites: Rewrite[];
   targetRole: { primary: string; secondary: string[]; confidence: "High" | "Medium" | "Low" };
+  alignment: { label: AlignmentLabel; hits: string[] };
 };
 
 const ROLES: Role[] = [

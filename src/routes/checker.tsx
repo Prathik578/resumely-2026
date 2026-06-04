@@ -699,6 +699,22 @@ function Checker() {
 
                 {/* Role alignment */}
                 <Card title={`Role alignment — ${role} (${level})`}>
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full border ${
+                        analysis.alignment.label === "Strong Match"
+                          ? "border-foreground text-foreground"
+                          : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {analysis.alignment.label}
+                    </span>
+                    {analysis.alignment.hits.length > 0 && (
+                      <span className="text-[11px] text-muted-foreground">
+                        Matched signals: {analysis.alignment.hits.slice(0, 6).join(", ")}
+                      </span>
+                    )}
+                  </div>
                   <div className="space-y-3">
                     {analysis.roleAlignment.map((r) => (
                       <div key={r.label} className="border-l-2 border-border pl-3">

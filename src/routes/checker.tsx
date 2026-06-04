@@ -339,23 +339,26 @@ function mockAnalyze(text: string, role: Role, level: Level): Analysis {
       : "Section ordering is consistent with the target experience level.",
   ];
 
-  const rewrites: Rewrite[] = [
-    {
-      before: "Worked on frontend development for the company website.",
-      after:
-        "Built responsive frontend features in React that improved mobile usability and reduced page-load friction for visitors.",
-    },
-    {
-      before: "Responsible for analyzing customer data and creating reports.",
-      after:
-        "Turned customer behavior data into weekly reports that informed retention experiments and prioritization decisions.",
-    },
-    {
-      before: "Helped the marketing team with campaigns.",
-      after:
-        "Partnered with marketing to ship campaigns end-to-end — owning copy, segmentation, and post-launch reporting.",
-    },
-  ];
+  // Extract real bullets from the resume to ground rewrites (no hardcoded examples).
+  const bulletLines = raw
+    .split(/\r?\n/)
+    .map((l) => l.replace(/^[\s•\-*–▪●·]+/, "").trim())
+    .filter((l) => l.length > 25 && l.length < 260 && /[a-z]/i.test(l));
+
+  const weakPatterns = /^(responsible for|worked on|helped|assisted|involved in|participated|tasked with)/i;
+  const weakBullets = bulletLines.filter((l) => weakPatterns.test(l) || (!/\d/.test(l) && /\b(developed|built|managed|created)\b/i.test(l))).slice(0, 3);
+
+  const rewrites: Rewrite[] = weakBullets.map((b) => ({
+    before: b,
+    after:
+      b
+        .replace(weakPatterns, "")
+        .replace(/^\W+/, "")
+        .replace(/^./, (c) => c.toUpperCase()) +
+      " — quantify the outcome (users, %, time saved) and lead with the action you owned.",
+  }));
+
+  const alignment = evaluateAlignment(raw, role);
 
   return {
     verdict,
@@ -369,6 +372,7 @@ function mockAnalyze(text: string, role: Role, level: Level): Analysis {
     roleAlignment: roleCriteria[role],
     rewrites,
     targetRole: extractTargetRole(text),
+    alignment: { label: alignment.label, hits: alignment.hits },
   };
 }
 

@@ -249,6 +249,32 @@ function count(text: string, keywords: string[]): number {
   return keywords.reduce((n, k) => (text.includes(k) ? n + 1 : n), 0);
 }
 
+const ROLE_KEYWORDS: Record<Role, string[]> = {
+  "Software Engineering": ["software", "developer", "engineer", "react", "javascript", "typescript", "python", "java", "node", "api", "backend", "frontend", "full-stack", "fullstack", "git", "aws", "docker", "algorithm", "rest", "sql"],
+  "Data Analysis": ["data", "sql", "tableau", "power bi", "excel", "dashboard", "analytics", "etl", "pandas", "numpy", "statistics", "visualization", "report"],
+  "Product Management": ["product", "roadmap", "prd", "stakeholder", "user research", "prioritization", "feature", "kpi", "metric", "launch"],
+  "UI/UX Design": ["ui", "ux", "figma", "sketch", "wireframe", "prototype", "user experience", "interaction", "design system", "usability"],
+  Marketing: ["marketing", "seo", "sem", "campaign", "brand", "social media", "google ads", "content", "growth", "audience", "ctr"],
+  "Business Analyst": ["business analyst", "requirements", "stakeholder", "process", "jira", "workflow", "documentation", "analysis"],
+  Sales: ["sales", "quota", "pipeline", "crm", "salesforce", "lead", "account executive", "client", "deal", "revenue"],
+  "General Internship": ["intern", "internship", "project", "team", "learn", "course", "club", "volunteer", "student"],
+};
+
+type AlignmentLabel = "Strong Match" | "Partial Match" | "Weak Match" | "No Match (Out of Scope)";
+
+function evaluateAlignment(text: string, role: Role): { label: AlignmentLabel; score: number; hits: string[] } {
+  const lower = text.toLowerCase();
+  const kws = ROLE_KEYWORDS[role];
+  const hits = kws.filter((k) => lower.includes(k));
+  const score = hits.length;
+  let label: AlignmentLabel;
+  if (score >= 5) label = "Strong Match";
+  else if (score >= 3) label = "Partial Match";
+  else if (score >= 1) label = "Weak Match";
+  else label = "No Match (Out of Scope)";
+  return { label, score, hits };
+}
+
 function mockAnalyze(text: string, role: Role, level: Level): Analysis {
   const raw = text.trim();
   const len = raw.length;

@@ -410,6 +410,15 @@ function Checker() {
       );
       return;
     }
+    const alignment = evaluateAlignment(text, role);
+    if (alignment.label === "Weak Match" || alignment.label === "No Match (Out of Scope)") {
+      setAnalysis(null);
+      setLoading(false);
+      setInvalidMessage(
+        `${alignment.label}: Your resume does not strongly match the selected role (${role}). Please update your resume or choose a more accurate target role.`,
+      );
+      return;
+    }
     setInvalidMessage(null);
     setLoading(true);
     setAnalysis(null);

@@ -75,11 +75,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "ATS Resume Builder — Create a professional resume in minutes" },
       { name: "description", content: "Free ATS-friendly resume builder. Fill in your info, preview live, and download as PDF." },
       { name: "author", content: "Resume Builder" },
-      { property: "og:title", content: "ATS Resume Builder" },
-      { property: "og:description", content: "Create a professional ATS-friendly resume and download as PDF." },
+      { property: "og:title", content: "ATS Resume Builder — Create a professional resume in minutes" },
+      { property: "og:description", content: "Free ATS-friendly resume builder. Fill in your info, preview live, and download as PDF." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "ATS Resume Builder — Create a professional resume in minutes" },
+      { name: "twitter:description", content: "Free ATS-friendly resume builder. Fill in your info, preview live, and download as PDF." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f85ed77f-d3e0-4af4-9e73-94491afa16c3/id-preview-b7907a0a--f205307f-4eaa-422e-946f-9ce2ed053f97.lovable.app-1780541519256.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f85ed77f-d3e0-4af4-9e73-94491afa16c3/id-preview-b7907a0a--f205307f-4eaa-422e-946f-9ce2ed053f97.lovable.app-1780541519256.png" },
     ],
     links: [
       {

@@ -49,6 +49,7 @@ type Analysis = {
   roleAlignment: { label: string; note: string }[];
   rewrites: Rewrite[];
   targetRole: { primary: string; secondary: string[]; confidence: "High" | "Medium" | "Low" };
+  alignment: { label: AlignmentLabel; hits: string[] };
 };
 
 const ROLES: Role[] = [
@@ -249,6 +250,32 @@ function count(text: string, keywords: string[]): number {
   return keywords.reduce((n, k) => (text.includes(k) ? n + 1 : n), 0);
 }
 
+const ROLE_KEYWORDS: Record<Role, string[]> = {
+  "Software Engineering": ["software", "developer", "engineer", "react", "javascript", "typescript", "python", "java", "node", "api", "backend", "frontend", "full-stack", "fullstack", "git", "aws", "docker", "algorithm", "rest", "sql"],
+  "Data Analysis": ["data", "sql", "tableau", "power bi", "excel", "dashboard", "analytics", "etl", "pandas", "numpy", "statistics", "visualization", "report"],
+  "Product Management": ["product", "roadmap", "prd", "stakeholder", "user research", "prioritization", "feature", "kpi", "metric", "launch"],
+  "UI/UX Design": ["ui", "ux", "figma", "sketch", "wireframe", "prototype", "user experience", "interaction", "design system", "usability"],
+  Marketing: ["marketing", "seo", "sem", "campaign", "brand", "social media", "google ads", "content", "growth", "audience", "ctr"],
+  "Business Analyst": ["business analyst", "requirements", "stakeholder", "process", "jira", "workflow", "documentation", "analysis"],
+  Sales: ["sales", "quota", "pipeline", "crm", "salesforce", "lead", "account executive", "client", "deal", "revenue"],
+  "General Internship": ["intern", "internship", "project", "team", "learn", "course", "club", "volunteer", "student"],
+};
+
+type AlignmentLabel = "Strong Match" | "Partial Match" | "Weak Match" | "No Match (Out of Scope)";
+
+function evaluateAlignment(text: string, role: Role): { label: AlignmentLabel; score: number; hits: string[] } {
+  const lower = text.toLowerCase();
+  const kws = ROLE_KEYWORDS[role];
+  const hits = kws.filter((k) => lower.includes(k));
+  const score = hits.length;
+  let label: AlignmentLabel;
+  if (score >= 5) label = "Strong Match";
+  else if (score >= 3) label = "Partial Match";
+  else if (score >= 1) label = "Weak Match";
+  else label = "No Match (Out of Scope)";
+  return { label, score, hits };
+}
+
 function mockAnalyze(text: string, role: Role, level: Level): Analysis {
   const raw = text.trim();
   const len = raw.length;
@@ -313,23 +340,26 @@ function mockAnalyze(text: string, role: Role, level: Level): Analysis {
       : "Section ordering is consistent with the target experience level.",
   ];
 
-  const rewrites: Rewrite[] = [
-    {
-      before: "Worked on frontend development for the company website.",
-      after:
-        "Built responsive frontend features in React that improved mobile usability and reduced page-load friction for visitors.",
-    },
-    {
-      before: "Responsible for analyzing customer data and creating reports.",
-      after:
-        "Turned customer behavior data into weekly reports that informed retention experiments and prioritization decisions.",
-    },
-    {
-      before: "Helped the marketing team with campaigns.",
-      after:
-        "Partnered with marketing to ship campaigns end-to-end — owning copy, segmentation, and post-launch reporting.",
-    },
-  ];
+  // Extract real bullets from the resume to ground rewrites (no hardcoded examples).
+  const bulletLines = raw
+    .split(/\r?\n/)
+    .map((l) => l.replace(/^[\s•\-*–▪●·]+/, "").trim())
+    .filter((l) => l.length > 25 && l.length < 260 && /[a-z]/i.test(l));
+
+  const weakPatterns = /^(responsible for|worked on|helped|assisted|involved in|participated|tasked with)/i;
+  const weakBullets = bulletLines.filter((l) => weakPatterns.test(l) || (!/\d/.test(l) && /\b(developed|built|managed|created)\b/i.test(l))).slice(0, 3);
+
+  const rewrites: Rewrite[] = weakBullets.map((b) => ({
+    before: b,
+    after:
+      b
+        .replace(weakPatterns, "")
+        .replace(/^\W+/, "")
+        .replace(/^./, (c) => c.toUpperCase()) +
+      " — quantify the outcome (users, %, time saved) and lead with the action you owned.",
+  }));
+
+  const alignment = evaluateAlignment(raw, role);
 
   return {
     verdict,
@@ -343,6 +373,7 @@ function mockAnalyze(text: string, role: Role, level: Level): Analysis {
     roleAlignment: roleCriteria[role],
     rewrites,
     targetRole: extractTargetRole(text),
+    alignment: { label: alignment.label, hits: alignment.hits },
   };
 }
 
@@ -381,6 +412,15 @@ function Checker() {
       setLoading(false);
       setInvalidMessage(
         "This resume does not appear to target a specific job role. Please provide a job-oriented resume.",
+      );
+      return;
+    }
+    const alignment = evaluateAlignment(text, role);
+    if (alignment.label === "Weak Match" || alignment.label === "No Match (Out of Scope)") {
+      setAnalysis(null);
+      setLoading(false);
+      setInvalidMessage(
+        `${alignment.label}: Your resume does not strongly match the selected role (${role}). Please update your resume or choose a more accurate target role.`,
       );
       return;
     }
@@ -659,6 +699,22 @@ function Checker() {
 
                 {/* Role alignment */}
                 <Card title={`Role alignment — ${role} (${level})`}>
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full border ${
+                        analysis.alignment.label === "Strong Match"
+                          ? "border-foreground text-foreground"
+                          : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      {analysis.alignment.label}
+                    </span>
+                    {analysis.alignment.hits.length > 0 && (
+                      <span className="text-[11px] text-muted-foreground">
+                        Matched signals: {analysis.alignment.hits.slice(0, 6).join(", ")}
+                      </span>
+                    )}
+                  </div>
                   <div className="space-y-3">
                     {analysis.roleAlignment.map((r) => (
                       <div key={r.label} className="border-l-2 border-border pl-3">
@@ -669,27 +725,29 @@ function Checker() {
                   </div>
                 </Card>
 
-                {/* Rewrites */}
-                <Card title="Impact rewrites — sample improvements">
-                  <div className="space-y-4">
-                    {analysis.rewrites.map((r, i) => (
-                      <div key={i} className="rounded-lg border border-border overflow-hidden">
-                        <div className="px-3 py-2 bg-secondary/50 text-xs text-muted-foreground">
-                          Before
+                {/* Rewrites — only when actual weak bullets were detected in the resume */}
+                {analysis.rewrites.length > 0 && (
+                  <Card title="Impact rewrites — from your resume">
+                    <div className="space-y-4">
+                      {analysis.rewrites.map((r, i) => (
+                        <div key={i} className="rounded-lg border border-border overflow-hidden">
+                          <div className="px-3 py-2 bg-secondary/50 text-xs text-muted-foreground">
+                            Your bullet
+                          </div>
+                          <p className="px-3 py-2 text-sm text-muted-foreground">{r.before}</p>
+                          <div className="px-3 py-2 bg-foreground text-background text-xs">
+                            Suggested rewrite direction
+                          </div>
+                          <p className="px-3 py-2 text-sm">{r.after}</p>
                         </div>
-                        <p className="px-3 py-2 text-sm text-muted-foreground">{r.before}</p>
-                        <div className="px-3 py-2 bg-foreground text-background text-xs">
-                          Recruiter-readable rewrite
-                        </div>
-                        <p className="px-3 py-2 text-sm">{r.after}</p>
-                      </div>
-                    ))}
-                    <p className="text-[11px] text-muted-foreground">
-                      Review and personalize all AI suggestions before applying. We avoid inventing
-                      metrics — fill in real numbers where you have them.
-                    </p>
-                  </div>
-                </Card>
+                      ))}
+                      <p className="text-[11px] text-muted-foreground">
+                        Suggestions are derived from your own bullets — fill in real numbers and
+                        verbs that match what you actually did.
+                      </p>
+                    </div>
+                  </Card>
+                )}
               </>
             )}
           </div>

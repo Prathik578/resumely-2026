@@ -725,27 +725,29 @@ function Checker() {
                   </div>
                 </Card>
 
-                {/* Rewrites */}
-                <Card title="Impact rewrites — sample improvements">
-                  <div className="space-y-4">
-                    {analysis.rewrites.map((r, i) => (
-                      <div key={i} className="rounded-lg border border-border overflow-hidden">
-                        <div className="px-3 py-2 bg-secondary/50 text-xs text-muted-foreground">
-                          Before
+                {/* Rewrites — only when actual weak bullets were detected in the resume */}
+                {analysis.rewrites.length > 0 && (
+                  <Card title="Impact rewrites — from your resume">
+                    <div className="space-y-4">
+                      {analysis.rewrites.map((r, i) => (
+                        <div key={i} className="rounded-lg border border-border overflow-hidden">
+                          <div className="px-3 py-2 bg-secondary/50 text-xs text-muted-foreground">
+                            Your bullet
+                          </div>
+                          <p className="px-3 py-2 text-sm text-muted-foreground">{r.before}</p>
+                          <div className="px-3 py-2 bg-foreground text-background text-xs">
+                            Suggested rewrite direction
+                          </div>
+                          <p className="px-3 py-2 text-sm">{r.after}</p>
                         </div>
-                        <p className="px-3 py-2 text-sm text-muted-foreground">{r.before}</p>
-                        <div className="px-3 py-2 bg-foreground text-background text-xs">
-                          Recruiter-readable rewrite
-                        </div>
-                        <p className="px-3 py-2 text-sm">{r.after}</p>
-                      </div>
-                    ))}
-                    <p className="text-[11px] text-muted-foreground">
-                      Review and personalize all AI suggestions before applying. We avoid inventing
-                      metrics — fill in real numbers where you have them.
-                    </p>
-                  </div>
-                </Card>
+                      ))}
+                      <p className="text-[11px] text-muted-foreground">
+                        Suggestions are derived from your own bullets — fill in real numbers and
+                        verbs that match what you actually did.
+                      </p>
+                    </div>
+                  </Card>
+                )}
               </>
             )}
           </div>
